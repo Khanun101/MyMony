@@ -15,10 +15,10 @@
 
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    /* พื้นหลังเปลี่ยนสีแบบ RGB (ผ่าน gradient) - ปรับสีให้สมูทขึ้น */
-    background: linear-gradient(45deg, rgb(210, 230, 240), rgb(180, 210, 225), rgb(200, 220, 235)); /* สีเริ่มต้นที่นุ่มนวลขึ้น */
+    /* พื้นหลังเปลี่ยนสีแบบไล่เฉดเข้ม-อ่อนและกลมกลืน */
+    background: linear-gradient(45deg, rgb(180, 210, 225), rgb(210, 230, 240)); /* สีเริ่มต้น: ฟ้ากลาง -> ฟ้าอ่อน */
     background-size: 400% 400%; /* ขนาดใหญ่เพื่อ animate gradient */
-    animation: backgroundSmoothRGBAnimation 30s ease-in-out infinite alternate; /* เปลี่ยนชื่อและ timing-function */
+    animation: backgroundSmoothRGBAnimation 35s ease-in-out infinite alternate; /* เพิ่มเวลาให้ช้าลงเล็กน้อย */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -30,27 +30,31 @@ body {
     position: relative;
 }
 
-/* Keyframes สำหรับอนิเมชั่นพื้นหลังเปลี่ยนสีแบบ RGB (ผ่าน gradient) - ปรับสีให้สมูทขึ้น */
+/* Keyframes สำหรับอนิเมชั่นพื้นหลังเปลี่ยนสีแบบไล่เฉดเข้ม-อ่อน */
 @keyframes backgroundSmoothRGBAnimation {
     0% {
         background-position: 0% 0%;
-        background-image: linear-gradient(45deg, rgb(210, 230, 240), rgb(180, 210, 225), rgb(200, 220, 235)); /* โทนฟ้า/เทาอ่อน */
+        background-image: linear-gradient(45deg, rgb(180, 210, 225), rgb(210, 230, 240), rgb(220, 240, 250)); /* ฟ้ากลาง -> ฟ้าอ่อน -> ฟ้าอ่อนมาก */
     }
-    25% {
+    20% {
         background-position: 100% 0%;
-        background-image: linear-gradient(45deg, rgb(255, 245, 230), rgb(250, 225, 200), rgb(245, 215, 190)); /* โทนส้ม/ครีมอ่อน */
+        background-image: linear-gradient(45deg, rgb(255, 200, 150), rgb(255, 220, 180), rgb(255, 230, 200)); /* ส้ม -> ส้มอ่อน -> ส้มอ่อนมาก */
     }
-    50% {
+    40% {
         background-position: 0% 100%;
-        background-image: linear-gradient(45deg, rgb(230, 255, 230), rgb(200, 250, 200), rgb(215, 245, 215)); /* โทนเขียวอ่อน */
+        background-image: linear-gradient(45deg, rgb(150, 255, 150), rgb(180, 255, 180), rgb(200, 255, 200)); /* เขียว -> เขียวอ่อน -> เขียวอ่อนมาก */
     }
-    75% {
+    60% {
         background-position: 100% 100%;
-        background-image: linear-gradient(45deg, rgb(240, 230, 255), rgb(220, 200, 245), rgb(235, 215, 250)); /* โทนม่วง/ชมพูอ่อน */
+        background-image: linear-gradient(45deg, rgb(200, 150, 255), rgb(220, 180, 255), rgb(230, 200, 255)); /* ม่วง -> ม่วงอ่อน -> ม่วงอ่อนมาก */
+    }
+    80% {
+        background-position: 0% 0%;
+        background-image: linear-gradient(45deg, rgb(255, 150, 150), rgb(255, 180, 180), rgb(255, 200, 200)); /* ชมพู -> ชมพูอ่อน -> ชมพูอ่อนมาก */
     }
     100% {
         background-position: 0% 0%;
-        background-image: linear-gradient(45deg, rgb(210, 230, 240), rgb(180, 210, 225), rgb(200, 220, 235)); /* กลับสู่โทนฟ้า/เทาอ่อน */
+        background-image: linear-gradient(45deg, rgb(180, 210, 225), rgb(210, 230, 240), rgb(220, 240, 250)); /* กลับสู่ฟ้ากลาง -> ฟ้าอ่อน */
     }
 }
 
@@ -117,6 +121,7 @@ h1 {
 .calendar-header button svg {
     width: 20px;
     height: 20px;
+    fill: white; /* ตรวจสอบให้ไอคอนสีขาวเสมอ */
 }
 
 #currentMonthYear {
@@ -149,35 +154,35 @@ h1 {
 }
 
 .day-name {
-    /* ปรับปรุงให้เป็นไล่สีแบบผสมผสานและสมูทขึ้น */
-    background: linear-gradient(45deg, rgb(60, 160, 220), rgb(30, 130, 190)); /* สีเริ่มต้นที่นุ่มนวลขึ้น */
+    /* ปรับปรุงให้เป็นไล่สีแบบผสมผสาน เข้ม-อ่อน และสมูท */
+    background: linear-gradient(45deg, rgb(30, 130, 190), rgb(60, 160, 220)); /* สีเริ่มต้น: ฟ้าเข้ม -> ฟ้ากลาง */
     background-size: 200% 200%; /* ขนาดใหญ่ขึ้นเพื่อ animate gradient */
     color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    animation: dayNameSmoothGradientChange 15s ease-in-out infinite alternate; /* เปลี่ยนชื่อและ timing-function */
+    animation: dayNameSmoothGradientChange 20s ease-in-out infinite alternate; /* เพิ่มเวลาให้ช้าลงเล็กน้อย */
 }
 
-/* Keyframes สำหรับอนิเมชั่นเปลี่ยนสีของ Day Name แบบ Gradient - ปรับสีให้สมูทขึ้น */
+/* Keyframes สำหรับอนิเมชั่นเปลี่ยนสีของ Day Name แบบ Gradient เข้ม-อ่อน */
 @keyframes dayNameSmoothGradientChange {
     0% {
         background-position: 0% 50%;
-        background-image: linear-gradient(45deg, rgb(60, 160, 220), rgb(30, 130, 190)); /* Blue tones */
+        background-image: linear-gradient(45deg, rgb(30, 130, 190), rgb(60, 160, 220), rgb(90, 190, 250)); /* ฟ้าเข้ม -> กลาง -> อ่อน */
     }
     25% {
         background-position: 100% 50%;
-        background-image: linear-gradient(45deg, rgb(70, 210, 120), rgb(40, 180, 90)); /* Green tones */
+        background-image: linear-gradient(45deg, rgb(40, 180, 90), rgb(70, 210, 120), rgb(100, 240, 150)); /* เขียวเข้ม -> กลาง -> อ่อน */
     }
     50% {
         background-position: 0% 100%;
-        background-image: linear-gradient(45deg, rgb(250, 200, 30), rgb(220, 140, 0)); /* Yellow/Orange tones */
+        background-image: linear-gradient(45deg, rgb(220, 140, 0), rgb(250, 200, 30), rgb(255, 220, 60)); /* ส้มเข้ม -> กลาง -> อ่อน */
     }
     75% {
         background-position: 100% 0%;
-        background-image: linear-gradient(45deg, rgb(240, 80, 70), rgb(200, 40, 30)); /* Red tones */
+        background-image: linear-gradient(45deg, rgb(200, 40, 30), rgb(240, 80, 70), rgb(255, 120, 110)); /* แดงเข้ม -> กลาง -> อ่อน */
     }
     100% {
         background-position: 0% 50%;
-        background-image: linear-gradient(45deg, rgb(60, 160, 220), rgb(30, 130, 190)); /* Back to Blue tones */
+        background-image: linear-gradient(45deg, rgb(30, 130, 190), rgb(60, 160, 220), rgb(90, 190, 250)); /* กลับสู่ฟ้าเข้ม -> กลาง -> อ่อน */
     }
 }
 
