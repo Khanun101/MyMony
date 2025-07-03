@@ -10,6 +10,7 @@
     --bg-body: #ecf0f1;
     --saving-green: #27ae60;
     --today-red: #e74c3c;
+    --accent-blue: #5dade2; /* สีฟ้าสำหรับเน้น */
 }
 
 body {
@@ -24,6 +25,7 @@ body {
     margin: 0;
     color: var(--text-color);
     box-sizing: border-box;
+    overflow: hidden; /* ป้องกัน scrollbar จากอนิเมชั่นพื้นหลัง */
 }
 
 @keyframes gradientAnimation {
@@ -44,6 +46,7 @@ body {
     animation: fadeIn 0.8s ease-out forwards;
     transform: translateY(20px); /* Initial state for slight slide-up */
     animation-delay: 0.2s; /* Delay start of animation */
+    position: relative; /* สำคัญสำหรับจัดตำแหน่งตัวการ์ตูนแบบ absolute */
 }
 
 @keyframes fadeIn {
@@ -51,9 +54,38 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* สไตล์สำหรับตัวการ์ตูน */
+.character-wrapper {
+    position: absolute; /* จัดตำแหน่งแบบอิสระ */
+    top: -50px; /* เลื่อนขึ้นไปด้านบนของ container */
+    left: 50%; /* อยู่ตรงกลางแนวนอน */
+    transform: translateX(-50%); /* ปรับให้อยู่ตรงกลางจริง ๆ */
+    width: 150px; /* กำหนดความกว้างของพื้นที่ตัวการ์ตูน */
+    height: 150px; /* กำหนดความสูงของพื้นที่ตัวการ์ตูน */
+    overflow: hidden; /* ซ่อนส่วนที่เกินจากกรอบ */
+    z-index: 10; /* ให้ตัวการ์ตูนอยู่ด้านบนสุด */
+}
+
+.saving-character {
+    width: 100%; /* ให้รูปภาพเต็มพื้นที่ character-wrapper */
+    height: 100%; /* ให้รูปภาพเต็มพื้นที่ character-wrapper */
+    object-fit: contain; /* ปรับขนาดรูปภาพให้พอดีและรักษาสัดส่วน */
+    display: block; /* ลบช่องว่างด้านล่างรูปภาพ */
+    /* อนิเมชั่นสำหรับการปรากฏตัวของตัวการ์ตูน */
+    animation: characterSlideIn 1.2s ease-out forwards;
+    transform: translateY(100%); /* เริ่มต้นจากด้านล่างของ character-wrapper */
+    animation-delay: 0.8s; /* ดีเลย์เล็กน้อยหลังจาก container ปรากฏ */
+}
+
+@keyframes characterSlideIn {
+    from { transform: translateY(100%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
 
 h1 {
     color: var(--dark-blue);
+    margin-top: 80px; /* เพิ่ม margin ด้านบนเพื่อให้มีพื้นที่สำหรับตัวการ์ตูน */
     margin-bottom: 25px;
     font-size: 2.5em;
     letter-spacing: 1px;
@@ -83,7 +115,7 @@ h1 {
 
 .calendar-header button:hover {
     background-color: #2980b9;
-    transform: translateY(-2px); /* Slight lift effect */
+    transform: translateY(-2px);
 }
 
 .calendar-header button svg {
@@ -95,7 +127,7 @@ h1 {
     color: var(--dark-blue);
     font-size: 2em;
     font-weight: 600;
-    flex-grow: 1; /* Allow it to take available space */
+    flex-grow: 1;
 }
 
 .calendar-grid {
@@ -103,6 +135,12 @@ h1 {
     grid-template-columns: repeat(7, 1fr);
     gap: 8px;
     margin-bottom: 30px;
+    animation: gridFadeIn 0.5s ease-out; /* อนิเมชั่นสำหรับการเปลี่ยนเดือน */
+}
+
+@keyframes gridFadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .day-name, .calendar-day {
@@ -111,7 +149,7 @@ h1 {
     text-align: center;
     font-weight: bold;
     font-size: 0.95em;
-    box-sizing: border-box; /* Include padding in element's total width and height */
+    box-sizing: border-box;
 }
 
 .day-name {
@@ -130,12 +168,21 @@ h1 {
     align-items: center;
     position: relative;
     transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    animation: dayPopIn 0.3s ease-out forwards;
+    opacity: 0; /* Initial state for pop-in */
+    /* animation-delay จะถูกตั้งค่าใน JS */
+}
+
+@keyframes dayPopIn {
+    from { opacity: 0; transform: scale(0.8); }
+    to { opacity: 1; transform: scale(1); }
 }
 
 .calendar-day.empty {
     background-color: var(--bg-body);
     border: 1px dashed var(--border-color);
     opacity: 0.6;
+    animation: none;
 }
 
 .calendar-day.current-month {
@@ -143,13 +190,13 @@ h1 {
 }
 
 .calendar-day:not(.empty):hover {
-    background-color: var(--light-blue); /* Lighter blue on hover */
+    background-color: var(--light-blue);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .calendar-day.today {
     border: 2px solid var(--today-red);
-    background-color: #ffeaea; /* Light red for today */
+    background-color: #ffeaea;
     box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
 }
 
@@ -158,18 +205,18 @@ h1 {
     font-weight: bold;
     color: var(--dark-blue);
     margin-bottom: 5px;
-    padding-top: 5px; /* Space from top of cell */
+    padding-top: 5px;
 }
 
 .saving-input {
-    width: calc(100% - 20px); /* Adjust width considering padding */
+    width: calc(100% - 20px);
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 5px;
     text-align: center;
     font-size: 1em;
-    margin-top: auto; /* Push input to bottom */
-    margin-bottom: 5px; /* Space from bottom of cell */
+    margin-top: auto;
+    margin-bottom: 5px;
     box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
     transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
@@ -189,16 +236,30 @@ h1 {
     font-weight: bold;
     color: var(--saving-green);
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    transition: transform 0.3s ease-out; /* Animation for summary */
+    /* อนิเมชั่นเมื่อยอดเงินมีการเปลี่ยนแปลง (ยังต้องมี JS กระตุ้น) */
+    animation: pulseEffect 0.6s ease-out;
 }
+
+@keyframes pulseEffect {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.03); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .container {
         padding: 20px;
     }
+    .character-wrapper {
+        top: -40px; /* ปรับตำแหน่งตัวการ์ตูนให้สูงขึ้นเล็กน้อย */
+        width: 120px;
+        height: 120px;
+    }
     h1 {
         font-size: 2em;
+        margin-top: 70px;
     }
     #currentMonthYear {
         font-size: 1.5em;
@@ -230,8 +291,14 @@ h1 {
     .container {
         padding: 15px;
     }
+    .character-wrapper {
+        top: -30px; /* ปรับตำแหน่งตัวการ์ตูนให้สูงขึ้นเล็กน้อย */
+        width: 100px;
+        height: 100px;
+    }
     h1 {
         font-size: 1.8em;
+        margin-top: 60px;
     }
     .calendar-header {
         flex-direction: column;
