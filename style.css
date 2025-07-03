@@ -11,13 +11,18 @@
     --saving-green: #27ae60;
     --today-red: #e74c3c;
     --accent-blue: #5dade2; /* สีฟ้าสำหรับเน้น */
+
+    /* สีสำหรับจุดอนิเมชั่น */
+    --dot-color-1: rgba(167, 217, 237, 0.7); /* ฟ้าอ่อนโปร่งแสง */
+    --dot-color-2: rgba(109, 213, 237, 0.6); /* ฟ้ากลางโปร่งแสง */
+    --dot-color-3: rgba(52, 152, 219, 0.5);  /* ฟ้าเข้มโปร่งแสง */
 }
 
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(45deg, #dbeffb, #a7d9ed, #dbeffb);
+    background: linear-gradient(45deg, #dbeffb, #a7d9ed, #dbeffb); /* พื้นหลัง gradient สีฟ้า */
     background-size: 300% 300%;
-    animation: gradientAnimation 15s ease infinite;
+    animation: gradientAnimation 15s ease infinite; /* อนิเมชั่นพื้นหลังเคลื่อนไหว */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -25,15 +30,95 @@ body {
     margin: 0;
     color: var(--text-color);
     box-sizing: border-box;
-    overflow: hidden; /* ป้องกัน scrollbar จากอนิเมชั่นพื้นหลัง */
+    overflow: hidden; /* ป้องกัน scrollbar ที่เกิดจากอนิเมชั่น */
+    position: relative; /* สำคัญ: เพื่อให้ pseudo-elements สามารถจัดตำแหน่ง absolute ได้ */
 }
 
+/* Keyframes สำหรับอนิเมชั่นพื้นหลัง */
 @keyframes gradientAnimation {
     0% {background-position: 0% 50%;}
     50% {background-position: 100% 50%;}
     100% {background-position: 0% 50%;}
 }
 
+/* ------------------------------------------- */
+/* อนิเมชั่น "จุดเคลื่อนไหวไปมา" (Animated Dots) */
+/* ------------------------------------------- */
+
+/* สร้างจุด 3 จุดโดยใช้ pseudo-elements */
+body::before,
+body::after,
+.container::before { /* ใช้ .container::before เพิ่มอีก 1 จุดเพื่อกระจาย */
+    content: '';
+    position: absolute;
+    border-radius: 50%; /* ทำให้เป็นวงกลม */
+    filter: blur(15px); /* ทำให้ขอบฟุ้งๆ */
+    opacity: 0.7; /* ความทึบแสง */
+    z-index: -1; /* อยู่ด้านหลังเนื้อหาหลัก */
+}
+
+/* สไตล์และอนิเมชั่นสำหรับจุดที่ 1 (ใช้ ::before ของ body) */
+body::before {
+    background: var(--dot-color-1);
+    width: 180px;
+    height: 180px;
+    top: 10%;
+    left: 15%;
+    animation: dotMove1 20s infinite alternate ease-in-out;
+}
+
+/* สไตล์และอนิเมชั่นสำหรับจุดที่ 2 (ใช้ ::after ของ body) */
+body::after {
+    background: var(--dot-color-2);
+    width: 120px;
+    height: 120px;
+    bottom: 15%;
+    right: 10%;
+    animation: dotMove2 25s infinite alternate-reverse ease-in-out;
+}
+
+/* สไตล์และอนิเมชั่นสำหรับจุดที่ 3 (ใช้ ::before ของ container) */
+/* ต้องกำหนด position: relative ให้ container ด้วย */
+.container::before {
+    background: var(--dot-color-3);
+    width: 80px;
+    height: 80px;
+    top: -40px; /* ตำแหน่งจุดนี้จะลอยอยู่เหนือ container */
+    right: -40px;
+    animation: dotMove3 18s infinite alternate ease-in-out;
+    filter: blur(10px); /* จุดนี้อาจจะฟุ้งน้อยกว่าหน่อย */
+    z-index: 0; /* ให้อยู่ระหว่างพื้นหลังกับเนื้อหาหลัก */
+}
+
+
+/* Keyframes สำหรับการเคลื่อนไหวของแต่ละจุด */
+@keyframes dotMove1 {
+    0% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(150px, 80px) scale(1.1); }
+    50% { transform: translate(-50px, 250px) scale(0.9); }
+    75% { transform: translate(200px, -100px) scale(1.05); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes dotMove2 {
+    0% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(-150px, -50px) scale(0.95); }
+    50% { transform: translate(80px, -200px) scale(1.1); }
+    75% { transform: translate(-200px, 100px) scale(1.02); }
+    100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes dotMove3 {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    30% { transform: translate(-30px, 50px) rotate(45deg); }
+    70% { transform: translate(40px, -20px) rotate(-30deg); }
+    100% { transform: translate(0, 0) rotate(0deg); }
+}
+
+
+/* ------------------------------------------- */
+/* สไตล์และอนิเมชั่นสำหรับ Container และส่วนประกอบอื่นๆ */
+/* ------------------------------------------- */
 .container {
     background-color: #ffffff;
     padding: 30px;
@@ -42,11 +127,12 @@ body {
     text-align: center;
     width: 90%;
     max-width: 850px;
-    opacity: 0; /* Initial state for fade-in */
+    opacity: 0;
     animation: fadeIn 0.8s ease-out forwards;
-    transform: translateY(20px); /* Initial state for slight slide-up */
-    animation-delay: 0.2s; /* Delay start of animation */
-    position: relative; /* สำคัญสำหรับจัดตำแหน่งตัวการ์ตูนแบบ absolute */
+    transform: translateY(20px);
+    animation-delay: 0.2s;
+    position: relative; /* สำคัญ: เพื่อให้ .container::before จัดตำแหน่ง absolute ได้ */
+    z-index: 1; /* ให้ container อยู่เหนือจุดพื้นหลัง */
 }
 
 @keyframes fadeIn {
@@ -54,38 +140,9 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* สไตล์สำหรับตัวการ์ตูน */
-.character-wrapper {
-    position: absolute; /* จัดตำแหน่งแบบอิสระ */
-    top: -50px; /* เลื่อนขึ้นไปด้านบนของ container */
-    left: 50%; /* อยู่ตรงกลางแนวนอน */
-    transform: translateX(-50%); /* ปรับให้อยู่ตรงกลางจริง ๆ */
-    width: 150px; /* กำหนดความกว้างของพื้นที่ตัวการ์ตูน */
-    height: 150px; /* กำหนดความสูงของพื้นที่ตัวการ์ตูน */
-    overflow: hidden; /* ซ่อนส่วนที่เกินจากกรอบ */
-    z-index: 10; /* ให้ตัวการ์ตูนอยู่ด้านบนสุด */
-}
-
-.saving-character {
-    width: 100%; /* ให้รูปภาพเต็มพื้นที่ character-wrapper */
-    height: 100%; /* ให้รูปภาพเต็มพื้นที่ character-wrapper */
-    object-fit: contain; /* ปรับขนาดรูปภาพให้พอดีและรักษาสัดส่วน */
-    display: block; /* ลบช่องว่างด้านล่างรูปภาพ */
-    /* อนิเมชั่นสำหรับการปรากฏตัวของตัวการ์ตูน */
-    animation: characterSlideIn 1.2s ease-out forwards;
-    transform: translateY(100%); /* เริ่มต้นจากด้านล่างของ character-wrapper */
-    animation-delay: 0.8s; /* ดีเลย์เล็กน้อยหลังจาก container ปรากฏ */
-}
-
-@keyframes characterSlideIn {
-    from { transform: translateY(100%); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-}
-
 
 h1 {
     color: var(--dark-blue);
-    margin-top: 80px; /* เพิ่ม margin ด้านบนเพื่อให้มีพื้นที่สำหรับตัวการ์ตูน */
     margin-bottom: 25px;
     font-size: 2.5em;
     letter-spacing: 1px;
@@ -169,7 +226,7 @@ h1 {
     position: relative;
     transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
     animation: dayPopIn 0.3s ease-out forwards;
-    opacity: 0; /* Initial state for pop-in */
+    opacity: 0;
     /* animation-delay จะถูกตั้งค่าใน JS */
 }
 
@@ -235,89 +292,4 @@ h1 {
     font-size: 1.8em;
     font-weight: bold;
     color: var(--saving-green);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    /* อนิเมชั่นเมื่อยอดเงินมีการเปลี่ยนแปลง (ยังต้องมี JS กระตุ้น) */
-    animation: pulseEffect 0.6s ease-out;
-}
-
-@keyframes pulseEffect {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.03); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .container {
-        padding: 20px;
-    }
-    .character-wrapper {
-        top: -40px; /* ปรับตำแหน่งตัวการ์ตูนให้สูงขึ้นเล็กน้อย */
-        width: 120px;
-        height: 120px;
-    }
-    h1 {
-        font-size: 2em;
-        margin-top: 70px;
-    }
-    #currentMonthYear {
-        font-size: 1.5em;
-    }
-    .calendar-header button {
-        padding: 8px 12px;
-        font-size: 0.9em;
-    }
-    .day-name, .calendar-day {
-        padding: 8px 3px;
-        font-size: 0.9em;
-    }
-    .calendar-day {
-        min-height: 80px;
-    }
-    .date-number {
-        font-size: 1.2em;
-    }
-    .saving-input {
-        padding: 6px;
-        font-size: 0.9em;
-    }
-    .summary {
-        font-size: 1.4em;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 15px;
-    }
-    .character-wrapper {
-        top: -30px; /* ปรับตำแหน่งตัวการ์ตูนให้สูงขึ้นเล็กน้อย */
-        width: 100px;
-        height: 100px;
-    }
-    h1 {
-        font-size: 1.8em;
-        margin-top: 60px;
-    }
-    .calendar-header {
-        flex-direction: column;
-        gap: 15px;
-    }
-    #currentMonthYear {
-        font-size: 1.3em;
-    }
-    .calendar-grid {
-        gap: 5px;
-    }
-    .day-name, .calendar-day {
-        padding: 5px;
-        min-height: 70px;
-    }
-    .date-number {
-        font-size: 1em;
-    }
-    .saving-input {
-        width: 90%;
-    }
-}
+    box-shadow
