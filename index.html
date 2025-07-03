@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ปฏิทินออมเงินของฉัน</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>ปฏิทินออมเงิน</h1>
+        
+        <div class="calendar-header">
+            <button id="prevMonth" aria-label="เดือนก่อนหน้า">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-left"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </button>
+            <h2 id="currentMonthYear">กรกฎาคม 2568</h2>
+            <button id="nextMonth" aria-label="เดือนถัดไป">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right"><polyline points="9 18 15 12 9 6"></polyline></svg>
+            </button>
+        </div>
+
+        <div class="calendar-grid" id="calendarGrid">
+            </div>
+
+        <div class="summary">
+            <p>ยอดเงินออมรวม: <span id="totalSavings">0.00</span> บาท</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

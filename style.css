@@ -1,0 +1,256 @@
+/* style.css */
+
+:root {
+    --primary-blue: #3498db;
+    --light-blue: #e3f2fd;
+    --dark-blue: #2c3e50;
+    --text-color: #333;
+    --border-color: #e0e0e0;
+    --bg-light: #f9f9f9;
+    --bg-body: #ecf0f1;
+    --saving-green: #27ae60;
+    --today-red: #e74c3c;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(45deg, #dbeffb, #a7d9ed, #dbeffb);
+    background-size: 300% 300%;
+    animation: gradientAnimation 15s ease infinite;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: var(--text-color);
+    box-sizing: border-box;
+}
+
+@keyframes gradientAnimation {
+    0% {background-position: 0% 50%;}
+    50% {background-position: 100% 50%;}
+    100% {background-position: 0% 50%;}
+}
+
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    width: 90%;
+    max-width: 850px;
+    opacity: 0; /* Initial state for fade-in */
+    animation: fadeIn 0.8s ease-out forwards;
+    transform: translateY(20px); /* Initial state for slight slide-up */
+    animation-delay: 0.2s; /* Delay start of animation */
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
+h1 {
+    color: var(--dark-blue);
+    margin-bottom: 25px;
+    font-size: 2.5em;
+    letter-spacing: 1px;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 10px;
+}
+
+.calendar-header button {
+    background-color: var(--primary-blue);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-out;
+}
+
+.calendar-header button:hover {
+    background-color: #2980b9;
+    transform: translateY(-2px); /* Slight lift effect */
+}
+
+.calendar-header button svg {
+    width: 20px;
+    height: 20px;
+}
+
+#currentMonthYear {
+    color: var(--dark-blue);
+    font-size: 2em;
+    font-weight: 600;
+    flex-grow: 1; /* Allow it to take available space */
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-bottom: 30px;
+}
+
+.day-name, .calendar-day {
+    padding: 10px 5px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.95em;
+    box-sizing: border-box; /* Include padding in element's total width and height */
+}
+
+.day-name {
+    background-color: var(--primary-blue);
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day {
+    background-color: var(--bg-light);
+    border: 1px solid var(--border-color);
+    min-height: 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.calendar-day.empty {
+    background-color: var(--bg-body);
+    border: 1px dashed var(--border-color);
+    opacity: 0.6;
+}
+
+.calendar-day.current-month {
+    background-color: #ffffff;
+}
+
+.calendar-day:not(.empty):hover {
+    background-color: var(--light-blue); /* Lighter blue on hover */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.calendar-day.today {
+    border: 2px solid var(--today-red);
+    background-color: #ffeaea; /* Light red for today */
+    box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
+}
+
+.date-number {
+    font-size: 1.4em;
+    font-weight: bold;
+    color: var(--dark-blue);
+    margin-bottom: 5px;
+    padding-top: 5px; /* Space from top of cell */
+}
+
+.saving-input {
+    width: calc(100% - 20px); /* Adjust width considering padding */
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 1em;
+    margin-top: auto; /* Push input to bottom */
+    margin-bottom: 5px; /* Space from bottom of cell */
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
+    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.saving-input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
+    outline: none;
+}
+
+.summary {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: var(--light-blue);
+    border-radius: 10px;
+    font-size: 1.8em;
+    font-weight: bold;
+    color: var(--saving-green);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease-out; /* Animation for summary */
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    h1 {
+        font-size: 2em;
+    }
+    #currentMonthYear {
+        font-size: 1.5em;
+    }
+    .calendar-header button {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    .day-name, .calendar-day {
+        padding: 8px 3px;
+        font-size: 0.9em;
+    }
+    .calendar-day {
+        min-height: 80px;
+    }
+    .date-number {
+        font-size: 1.2em;
+    }
+    .saving-input {
+        padding: 6px;
+        font-size: 0.9em;
+    }
+    .summary {
+        font-size: 1.4em;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    .calendar-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    #currentMonthYear {
+        font-size: 1.3em;
+    }
+    .calendar-grid {
+        gap: 5px;
+    }
+    .day-name, .calendar-day {
+        padding: 5px;
+        min-height: 70px;
+    }
+    .date-number {
+        font-size: 1em;
+    }
+    .saving-input {
+        width: 90%;
+    }
+}
