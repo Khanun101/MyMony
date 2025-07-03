@@ -9,8 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let currentMonth = new Date().getMonth();
     let currentYear = new Date().getFullYear();
-    // ดึงข้อมูลการออมจาก Local Storage, ถ้าไม่มีให้เป็น Object ว่างเปล่า
-    // savingsData = { "YYYY-MM-DD": amount, ... }
     let savingsData = JSON.parse(localStorage.getItem('savingsData')) || {};
 
     const dayNames = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
@@ -35,12 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
             calendarGrid.appendChild(dayNameDiv);
         });
 
-        // คำนวณวันแรกของเดือนและจำนวนวันในเดือน
-        const firstDayOfMonth = new Date(year, month, 1).getDay(); // 0 = อาทิตย์, 1 = จันทร์...
-        const daysInMonth = new Date(year, month + 1, 0).getDate(); // ได้วันที่ของวันสุดท้ายของเดือน (คือจำนวนวันในเดือน)
+        const firstDayOfMonth = new Date(year, month, 1).getDay();
+        const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-        // อัปเดตข้อความเดือนและปีปัจจุบัน
-        currentMonthYearElement.textContent = `${monthNames[month]} ${year + 543}`; // +543 สำหรับปีพ.ศ.
+        currentMonthYearElement.textContent = `${monthNames[month]} ${year + 543}`;
 
         // เพิ่มช่องว่างสำหรับวันก่อนหน้าวันแรกของเดือน
         for (let i = 0; i < firstDayOfMonth; i++) {
@@ -55,7 +51,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const dayDiv = document.createElement('div');
             dayDiv.classList.add('calendar-day');
 
-            // ตรวจสอบว่าเป็นวันปัจจุบันหรือไม่
+            // กำหนด animation-delay สำหรับแต่ละวัน
+            // ทำให้แต่ละวันปรากฏขึ้นมาไม่พร้อมกัน ดูมีมิติมากขึ้น
+            dayDiv.style.animationDelay = `${(firstDayOfMonth + day) * 0.03}s`; // เพิ่มดีเลย์เล็กน้อย
+
             const today = new Date();
             const isToday = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear());
             if (isToday) {
@@ -74,17 +73,16 @@ document.addEventListener('DOMContentLoaded', () => {
             calendarGrid.appendChild(dayDiv);
         }
 
-        // คำนวณและแสดงยอดเงินออมรวมหลังจากปฏิทินถูกสร้าง
         calculateAndDisplayTotalSavings();
     }
 
     /**
      * อัปเดตข้อมูลการออมใน Local Storage และคำนวณยอดรวมใหม่
-     * @param {string} date - วันที่ในรูปแบบ YYYY-MM-DD
+     * @param {string} date - วันที่ในรูปแบบYYYY-MM-DD
      * @param {number} amount - จำนวนเงินที่ออม
      */
     function updateSavings(date, amount) {
-        if (amount <= 0) { // ถ้ากรอก 0 หรือค่าน้อยกว่า 0 ให้ลบข้อมูลนั้นออก
+        if (amount <= 0 || isNaN(amount)) { // ถ้ากรอก 0, ค่าน้อยกว่า 0 หรือไม่ใช่ตัวเลข ให้ลบข้อมูลนั้นออก
             delete savingsData[date];
         } else {
             savingsData[date] = amount;
@@ -99,16 +97,28 @@ document.addEventListener('DOMContentLoaded', () => {
     function calculateAndDisplayTotalSavings() {
         let total = 0;
         for (const date in savingsData) {
-            total += parseFloat(savingsData[date]) || 0; // รวมเงินออมแต่ละวัน
+            total += parseFloat(savingsData[date]) || 0;
         }
-        totalSavingsElement.textContent = total.toFixed(2); // แสดงผลเป็นทศนิยม 2 ตำแหน่ง
+        
+        // ตรวจสอบว่าค่าเปลี่ยนไปหรือไม่ก่อนที่จะเรียกอนิเมชั่น
+        const currentTotalText = totalSavingsElement.textContent;
+        const newTotalText = total.toFixed(2);
+
+        if (currentTotalText !== newTotalText) {
+            // เพิ่ม class เพื่อกระตุ้นอนิเมชั่น pulseEffect
+            totalSavingsElement.closest('.summary').classList.remove('pulseEffect'); // ลบ class เก่าออกก่อน
+            void totalSavingsElement.closest('.summary').offsetWidth; // ทริกการ reflow เพื่อให้อนิเมชั่นเล่นซ้ำ
+            totalSavingsElement.closest('.summary').classList.add('pulseEffect'); // เพิ่ม class ใหม่
+        }
+        
+        totalSavingsElement.textContent = newTotalText;
     }
 
     // Event listener สำหรับการเปลี่ยนแปลงค่าในช่องกรอกเงิน
     calendarGrid.addEventListener('input', (event) => {
         if (event.target.classList.contains('saving-input')) {
-            const date = event.target.dataset.date; // ดึงวันที่จาก data-date attribute
-            const amount = parseFloat(event.target.value); // แปลงค่าเป็นตัวเลข
+            const date = event.target.dataset.date;
+            const amount = parseFloat(event.target.value);
             updateSavings(date, amount);
         }
     });
