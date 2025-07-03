@@ -11,18 +11,14 @@
     --saving-green: #27ae60;
     --today-red: #e74c3c;
     --accent-blue: #5dade2; /* สีฟ้าสำหรับเน้น */
-
-    /* สีสำหรับจุดอนิเมชั่น */
-    --dot-color-1: rgba(167, 217, 237, 0.7); /* ฟ้าอ่อนโปร่งแสง */
-    --dot-color-2: rgba(109, 213, 237, 0.6); /* ฟ้ากลางโปร่งแสง */
-    --dot-color-3: rgba(52, 152, 219, 0.5);  /* ฟ้าเข้มโปร่งแสง */
 }
 
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    background: linear-gradient(45deg, #dbeffb, #a7d9ed, #dbeffb); /* พื้นหลัง gradient สีฟ้า */
-    background-size: 300% 300%;
-    animation: gradientAnimation 15s ease infinite; /* อนิเมชั่นพื้นหลังเคลื่อนไหว */
+    /* พื้นหลังเปลี่ยนสีแบบ RGB (ผ่าน gradient) */
+    background: linear-gradient(45deg, rgb(219, 239, 251), rgb(167, 217, 237)); /* สีเริ่มต้น */
+    background-size: 400% 400%; /* เพิ่มขนาดเพื่อรองรับการเคลื่อนไหวของ gradient */
+    animation: backgroundRGBAnimation 30s ease infinite alternate; /* อนิเมชั่นเปลี่ยนสีพื้นหลัง */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -31,89 +27,23 @@ body {
     color: var(--text-color);
     box-sizing: border-box;
     overflow: hidden; /* ป้องกัน scrollbar ที่เกิดจากอนิเมชั่น */
-    position: relative; /* สำคัญ: เพื่อให้ pseudo-elements สามารถจัดตำแหน่ง absolute ได้ */
+    position: relative; /* ยังคง position: relative ไว้เผื่ออนาคต หรือถ้ามี element อื่นที่ใช้ */
 }
 
-/* Keyframes สำหรับอนิเมชั่นพื้นหลัง */
-@keyframes gradientAnimation {
-    0% {background-position: 0% 50%;}
-    50% {background-position: 100% 50%;}
-    100% {background-position: 0% 50%;}
+/* Keyframes สำหรับอนิเมชั่นพื้นหลังเปลี่ยนสีแบบ RGB (ผ่าน gradient) */
+@keyframes backgroundRGBAnimation {
+    0% { background-position: 0% 0%; background-image: linear-gradient(45deg, rgb(219, 239, 251), rgb(167, 217, 237)); } /* ฟ้าอ่อน */
+    20% { background-position: 100% 0%; background-image: linear-gradient(45deg, rgb(255, 230, 200), rgb(255, 200, 150)); } /* ส้มอ่อน */
+    40% { background-position: 0% 100%; background-image: linear-gradient(45deg, rgb(200, 255, 200), rgb(150, 255, 150)); } /* เขียวอ่อน */
+    60% { background-position: 100% 100%; background-image: linear-gradient(45deg, rgb(230, 200, 255), rgb(200, 150, 255)); } /* ม่วงอ่อน */
+    80% { background-position: 0% 0%; background-image: linear-gradient(45deg, rgb(255, 200, 200), rgb(255, 150, 150)); } /* ชมพูอ่อน */
+    100% { background-position: 0% 0%; background-image: linear-gradient(45deg, rgb(219, 239, 251), rgb(167, 217, 237)); } /* กลับมาฟ้าอ่อน */
 }
+
 
 /* ------------------------------------------- */
-/* อนิเมชั่น "จุดเคลื่อนไหวไปมา" (Animated Dots) */
+/* ส่วนของอนิเมชั่น "จุดเคลื่อนไหวไปมา" ถูกลบออกแล้ว */
 /* ------------------------------------------- */
-
-/* สร้างจุด 3 จุดโดยใช้ pseudo-elements */
-body::before,
-body::after,
-.container::before { /* ใช้ .container::before เพิ่มอีก 1 จุดเพื่อกระจาย */
-    content: '';
-    position: absolute;
-    border-radius: 50%; /* ทำให้เป็นวงกลม */
-    filter: blur(15px); /* ทำให้ขอบฟุ้งๆ */
-    opacity: 0.7; /* ความทึบแสง */
-    z-index: -1; /* อยู่ด้านหลังเนื้อหาหลัก */
-}
-
-/* สไตล์และอนิเมชั่นสำหรับจุดที่ 1 (ใช้ ::before ของ body) */
-body::before {
-    background: var(--dot-color-1);
-    width: 180px;
-    height: 180px;
-    top: 10%;
-    left: 15%;
-    animation: dotMove1 20s infinite alternate ease-in-out;
-}
-
-/* สไตล์และอนิเมชั่นสำหรับจุดที่ 2 (ใช้ ::after ของ body) */
-body::after {
-    background: var(--dot-color-2);
-    width: 120px;
-    height: 120px;
-    bottom: 15%;
-    right: 10%;
-    animation: dotMove2 25s infinite alternate-reverse ease-in-out;
-}
-
-/* สไตล์และอนิเมชั่นสำหรับจุดที่ 3 (ใช้ ::before ของ container) */
-/* ต้องกำหนด position: relative ให้ container ด้วย */
-.container::before {
-    background: var(--dot-color-3);
-    width: 80px;
-    height: 80px;
-    top: -40px; /* ตำแหน่งจุดนี้จะลอยอยู่เหนือ container */
-    right: -40px;
-    animation: dotMove3 18s infinite alternate ease-in-out;
-    filter: blur(10px); /* จุดนี้อาจจะฟุ้งน้อยกว่าหน่อย */
-    z-index: 0; /* ให้อยู่ระหว่างพื้นหลังกับเนื้อหาหลัก */
-}
-
-
-/* Keyframes สำหรับการเคลื่อนไหวของแต่ละจุด */
-@keyframes dotMove1 {
-    0% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(150px, 80px) scale(1.1); }
-    50% { transform: translate(-50px, 250px) scale(0.9); }
-    75% { transform: translate(200px, -100px) scale(1.05); }
-    100% { transform: translate(0, 0) scale(1); }
-}
-
-@keyframes dotMove2 {
-    0% { transform: translate(0, 0) scale(1); }
-    25% { transform: translate(-150px, -50px) scale(0.95); }
-    50% { transform: translate(80px, -200px) scale(1.1); }
-    75% { transform: translate(-200px, 100px) scale(1.02); }
-    100% { transform: translate(0, 0) scale(1); }
-}
-
-@keyframes dotMove3 {
-    0% { transform: translate(0, 0) rotate(0deg); }
-    30% { transform: translate(-30px, 50px) rotate(45deg); }
-    70% { transform: translate(40px, -20px) rotate(-30deg); }
-    100% { transform: translate(0, 0) rotate(0deg); }
-}
 
 
 /* ------------------------------------------- */
@@ -131,8 +61,8 @@ body::after {
     animation: fadeIn 0.8s ease-out forwards;
     transform: translateY(20px);
     animation-delay: 0.2s;
-    position: relative; /* สำคัญ: เพื่อให้ .container::before จัดตำแหน่ง absolute ได้ */
-    z-index: 1; /* ให้ container อยู่เหนือจุดพื้นหลัง */
+    position: relative; /* ยังคง position: relative ไว้เผื่ออนาคต หรือถ้ามี element อื่นที่ใช้ */
+    z-index: 1; /* ให้ container อยู่เหนือพื้นหลัง */
 }
 
 @keyframes fadeIn {
@@ -167,7 +97,7 @@ h1 {
     display: flex;
     align-items: center;
     gap: 5px;
-    transition: background-color 0.3s ease-in-out, transform 0.2s ease-out;
+    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
 }
 
 .calendar-header button:hover {
@@ -305,21 +235,7 @@ h1 {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    body::before {
-        width: 120px;
-        height: 120px;
-        filter: blur(10px);
-    }
-    body::after {
-        width: 80px;
-        height: 80px;
-        filter: blur(10px);
-    }
-    .container::before {
-        width: 60px;
-        height: 60px;
-        filter: blur(8px);
-    }
+    /* ส่วนของอนิเมชั่นจุดเคลื่อนไหวใน Responsive adjustments ก็ถูกลบออกแล้ว */
 
     .container {
         padding: 20px;
@@ -354,18 +270,7 @@ h1 {
 }
 
 @media (max-width: 480px) {
-    body::before {
-        width: 90px;
-        height: 90px;
-    }
-    body::after {
-        width: 60px;
-        height: 60px;
-    }
-    .container::before {
-        width: 40px;
-        height: 40px;
-    }
+    /* ส่วนของอนิเมชั่นจุดเคลื่อนไหวใน Responsive adjustments ก็ถูกลบออกแล้ว */
 
     .container {
         padding: 15px;
