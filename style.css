@@ -292,4 +292,105 @@ h1 {
     font-size: 1.8em;
     font-weight: bold;
     color: var(--saving-green);
-    box-shadow
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    animation: pulseEffect 0.6s ease-out;
+}
+
+@keyframes pulseEffect {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.03); opacity: 0.8; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    body::before {
+        width: 120px;
+        height: 120px;
+        filter: blur(10px);
+    }
+    body::after {
+        width: 80px;
+        height: 80px;
+        filter: blur(10px);
+    }
+    .container::before {
+        width: 60px;
+        height: 60px;
+        filter: blur(8px);
+    }
+
+    .container {
+        padding: 20px;
+    }
+    h1 {
+        font-size: 2em;
+    }
+    #currentMonthYear {
+        font-size: 1.5em;
+    }
+    .calendar-header button {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    .day-name, .calendar-day {
+        padding: 8px 3px;
+        font-size: 0.9em;
+    }
+    .calendar-day {
+        min-height: 80px;
+    }
+    .date-number {
+        font-size: 1.2em;
+    }
+    .saving-input {
+        padding: 6px;
+        font-size: 0.9em;
+    }
+    .summary {
+        font-size: 1.4em;
+    }
+}
+
+@media (max-width: 480px) {
+    body::before {
+        width: 90px;
+        height: 90px;
+    }
+    body::after {
+        width: 60px;
+        height: 60px;
+    }
+    .container::before {
+        width: 40px;
+        height: 40px;
+    }
+
+    .container {
+        padding: 15px;
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+    .calendar-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    #currentMonthYear {
+        font-size: 1.3em;
+    }
+    .calendar-grid {
+        gap: 5px;
+    }
+    .day-name, .calendar-day {
+        padding: 5px;
+        min-height: 70px;
+    }
+    .date-number {
+        font-size: 1em;
+    }
+    .saving-input {
+        width: 90%;
+    }
+}
