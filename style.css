@@ -15,10 +15,10 @@
 
 body {
     font-family: 'Segoe UI', Arial, sans-serif;
-    /* พื้นหลังเปลี่ยนสีแบบ RGB (ผ่าน gradient) */
-    background: linear-gradient(45deg, rgb(219, 239, 251), rgb(167, 217, 237)); /* สีเริ่มต้น */
-    background-size: 400% 400%; /* เพิ่มขนาดเพื่อรองรับการเคลื่อนไหวของ gradient */
-    animation: backgroundRGBAnimation 30s ease infinite alternate; /* อนิเมชั่นเปลี่ยนสีพื้นหลัง */
+    /* พื้นหลังเปลี่ยนสีแบบ RGB (ผ่าน gradient) - ปรับสีให้สมูทขึ้น */
+    background: linear-gradient(45deg, rgb(210, 230, 240), rgb(180, 210, 225), rgb(200, 220, 235)); /* สีเริ่มต้นที่นุ่มนวลขึ้น */
+    background-size: 400% 400%; /* ขนาดใหญ่เพื่อ animate gradient */
+    animation: backgroundSmoothRGBAnimation 30s ease-in-out infinite alternate; /* เปลี่ยนชื่อและ timing-function */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -27,23 +27,32 @@ body {
     color: var(--text-color);
     box-sizing: border-box;
     overflow: hidden; /* ป้องกัน scrollbar ที่เกิดจากอนิเมชั่น */
-    position: relative; /* ยังคง position: relative ไว้เผื่ออนาคต หรือถ้ามี element อื่นที่ใช้ */
+    position: relative;
 }
 
-/* Keyframes สำหรับอนิเมชั่นพื้นหลังเปลี่ยนสีแบบ RGB (ผ่าน gradient) */
-@keyframes backgroundRGBAnimation {
-    0% { background-position: 0% 0%; background-image: linear-gradient(45deg, rgb(219, 239, 251), rgb(167, 217, 237)); } /* ฟ้าอ่อน */
-    20% { background-position: 100% 0%; background-image: linear-gradient(45deg, rgb(255, 230, 200), rgb(255, 200, 150)); } /* ส้มอ่อน */
-    40% { background-position: 0% 100%; background-image: linear-gradient(45deg, rgb(200, 255, 200), rgb(150, 255, 150)); } /* เขียวอ่อน */
-    60% { background-position: 100% 100%; background-image: linear-gradient(45deg, rgb(230, 200, 255), rgb(200, 150, 255)); } /* ม่วงอ่อน */
-    80% { background-position: 0% 0%; background-image: linear-gradient(45deg, rgb(255, 200, 200), rgb(255, 150, 150)); } /* ชมพูอ่อน */
-    100% { background-position: 0% 0%; background-image: linear-gradient(45deg, rgb(219, 239, 251), rgb(167, 217, 237)); } /* กลับมาฟ้าอ่อน */
+/* Keyframes สำหรับอนิเมชั่นพื้นหลังเปลี่ยนสีแบบ RGB (ผ่าน gradient) - ปรับสีให้สมูทขึ้น */
+@keyframes backgroundSmoothRGBAnimation {
+    0% {
+        background-position: 0% 0%;
+        background-image: linear-gradient(45deg, rgb(210, 230, 240), rgb(180, 210, 225), rgb(200, 220, 235)); /* โทนฟ้า/เทาอ่อน */
+    }
+    25% {
+        background-position: 100% 0%;
+        background-image: linear-gradient(45deg, rgb(255, 245, 230), rgb(250, 225, 200), rgb(245, 215, 190)); /* โทนส้ม/ครีมอ่อน */
+    }
+    50% {
+        background-position: 0% 100%;
+        background-image: linear-gradient(45deg, rgb(230, 255, 230), rgb(200, 250, 200), rgb(215, 245, 215)); /* โทนเขียวอ่อน */
+    }
+    75% {
+        background-position: 100% 100%;
+        background-image: linear-gradient(45deg, rgb(240, 230, 255), rgb(220, 200, 245), rgb(235, 215, 250)); /* โทนม่วง/ชมพูอ่อน */
+    }
+    100% {
+        background-position: 0% 0%;
+        background-image: linear-gradient(45deg, rgb(210, 230, 240), rgb(180, 210, 225), rgb(200, 220, 235)); /* กลับสู่โทนฟ้า/เทาอ่อน */
+    }
 }
-
-
-/* ------------------------------------------- */
-/* ส่วนของอนิเมชั่น "จุดเคลื่อนไหวไปมา" ถูกลบออกแล้ว */
-/* ------------------------------------------- */
 
 
 /* ------------------------------------------- */
@@ -61,7 +70,7 @@ body {
     animation: fadeIn 0.8s ease-out forwards;
     transform: translateY(20px);
     animation-delay: 0.2s;
-    position: relative; /* ยังคง position: relative ไว้เผื่ออนาคต หรือถ้ามี element อื่นที่ใช้ */
+    position: relative;
     z-index: 1; /* ให้ container อยู่เหนือพื้นหลัง */
 }
 
@@ -140,10 +149,38 @@ h1 {
 }
 
 .day-name {
-    background-color: var(--primary-blue);
+    /* ปรับปรุงให้เป็นไล่สีแบบผสมผสานและสมูทขึ้น */
+    background: linear-gradient(45deg, rgb(60, 160, 220), rgb(30, 130, 190)); /* สีเริ่มต้นที่นุ่มนวลขึ้น */
+    background-size: 200% 200%; /* ขนาดใหญ่ขึ้นเพื่อ animate gradient */
     color: white;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    animation: dayNameSmoothGradientChange 15s ease-in-out infinite alternate; /* เปลี่ยนชื่อและ timing-function */
 }
+
+/* Keyframes สำหรับอนิเมชั่นเปลี่ยนสีของ Day Name แบบ Gradient - ปรับสีให้สมูทขึ้น */
+@keyframes dayNameSmoothGradientChange {
+    0% {
+        background-position: 0% 50%;
+        background-image: linear-gradient(45deg, rgb(60, 160, 220), rgb(30, 130, 190)); /* Blue tones */
+    }
+    25% {
+        background-position: 100% 50%;
+        background-image: linear-gradient(45deg, rgb(70, 210, 120), rgb(40, 180, 90)); /* Green tones */
+    }
+    50% {
+        background-position: 0% 100%;
+        background-image: linear-gradient(45deg, rgb(250, 200, 30), rgb(220, 140, 0)); /* Yellow/Orange tones */
+    }
+    75% {
+        background-position: 100% 0%;
+        background-image: linear-gradient(45deg, rgb(240, 80, 70), rgb(200, 40, 30)); /* Red tones */
+    }
+    100% {
+        background-position: 0% 50%;
+        background-image: linear-gradient(45deg, rgb(60, 160, 220), rgb(30, 130, 190)); /* Back to Blue tones */
+    }
+}
+
 
 .calendar-day {
     background-color: var(--bg-light);
@@ -235,8 +272,6 @@ h1 {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-    /* ส่วนของอนิเมชั่นจุดเคลื่อนไหวใน Responsive adjustments ก็ถูกลบออกแล้ว */
-
     .container {
         padding: 20px;
     }
@@ -270,8 +305,6 @@ h1 {
 }
 
 @media (max-width: 480px) {
-    /* ส่วนของอนิเมชั่นจุดเคลื่อนไหวใน Responsive adjustments ก็ถูกลบออกแล้ว */
-
     .container {
         padding: 15px;
     }
