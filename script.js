@@ -1,147 +1,108 @@
-// script.js
+// --- State ---
+const KEY = "mymony:transactions";
+let tx = JSON.parse(localStorage.getItem(KEY) || "[]");
 
-document.addEventListener('DOMContentLoaded', () => {
-    const calendarGrid = document.getElementById('calendarGrid');
-    const currentMonthYearElement = document.getElementById('currentMonthYear');
-    const prevMonthBtn = document.getElementById('prevMonth');
-    const nextMonthBtn = document.getElementById('nextMonth');
-    const totalSavingsElement = document.getElementById('totalSavings');
+// --- DOM ---
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
 
-    let currentMonth = new Date().getMonth();
-    let currentYear = new Date().getFullYear();
-    let savingsData = JSON.parse(localStorage.getItem('savingsData')) || {};
+const txForm = $("#txForm");
+const titleEl = $("#title");
+const amountEl = $("#amount");
+const typeEl = $("#type");
+const listEl = $("#txList");
+const searchEl = $("#search");
+const filterEl = $("#filterType");
+const resetBtn = $("#resetAll");
+const sumIncomeEl = $("#sumIncome");
+const sumExpenseEl = $("#sumExpense");
+const sumTotalEl = $("#sumTotal");
 
-    const dayNames = ['อาทิตย์', 'จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์'];
-    const monthNames = [
-        'มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน',
-        'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'
-    ];
+// --- Utils ---
+const fmt = (n) =>
+  Number(n).toLocaleString("th-TH", { style: "currency", currency: "THB" });
 
-    /**
-     * สร้างและแสดงปฏิทินสำหรับเดือนและปีที่กำหนด
-     * @param {number} month - เดือน (0-11)
-     * @param {number} year - ปี
-     */
-    function renderCalendar(month, year) {
-        calendarGrid.innerHTML = ''; // ล้างปฏิทินเก่าออก
+const id = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
 
-        // เพิ่มชื่อวันในสัปดาห์
-        dayNames.forEach(day => {
-            const dayNameDiv = document.createElement('div');
-            dayNameDiv.classList.add('day-name');
-            dayNameDiv.textContent = day;
-            calendarGrid.appendChild(dayNameDiv);
-        });
+function save() { localStorage.setItem(KEY, JSON.stringify(tx)); }
 
-        const firstDayOfMonth = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
+function recalc() {
+  const income = tx.filter(t => t.type === "income").reduce((a,b)=>a+b.amount,0);
+  const expense = tx.filter(t => t.type === "expense").reduce((a,b)=>a+b.amount,0);
+  const total = income - expense;
+  sumIncomeEl.textContent  = `+ ${fmt(income)}`;
+  sumExpenseEl.textContent = `− ${fmt(expense)}`;
+  sumTotalEl.textContent   = fmt(total);
+  sumTotalEl.classList.toggle("text-rose-600", total < 0);
+  sumTotalEl.classList.toggle("text-slate-800", total >= 0);
+}
 
-        currentMonthYearElement.textContent = `${monthNames[month]} ${year + 543}`;
+function render() {
+  const q = searchEl.value.trim().toLowerCase();
+  const filter = filterEl.value; // all | income | expense
 
-        // เพิ่มช่องว่างสำหรับวันก่อนหน้าวันแรกของเดือน
-        for (let i = 0; i < firstDayOfMonth; i++) {
-            const emptyDiv = document.createElement('div');
-            emptyDiv.classList.add('calendar-day', 'empty');
-            calendarGrid.appendChild(emptyDiv);
-        }
-
-        // เพิ่มวันในแต่ละวันของเดือน
-        for (let day = 1; day <= daysInMonth; day++) {
-            const dateISO = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-            const dayDiv = document.createElement('div');
-            dayDiv.classList.add('calendar-day');
-
-            // กำหนด animation-delay สำหรับแต่ละวัน
-            // ทำให้แต่ละวันปรากฏขึ้นมาไม่พร้อมกัน ดูมีมิติมากขึ้น
-            dayDiv.style.animationDelay = `${(firstDayOfMonth + day) * 0.03}s`; // เพิ่มดีเลย์เล็กน้อย
-
-            const today = new Date();
-            const isToday = (day === today.getDate() && month === today.getMonth() && year === today.getFullYear());
-            if (isToday) {
-                dayDiv.classList.add('today');
-            }
-
-            dayDiv.innerHTML = `
-                <div class="date-number">${day}</div>
-                <input type="number" 
-                       class="saving-input" 
-                       data-date="${dateISO}" 
-                       value="${savingsData[dateISO] || ''}" 
-                       placeholder="เงินออม"
-                       min="0">
-            `;
-            calendarGrid.appendChild(dayDiv);
-        }
-
-        calculateAndDisplayTotalSavings();
-    }
-
-    /**
-     * อัปเดตข้อมูลการออมใน Local Storage และคำนวณยอดรวมใหม่
-     * @param {string} date - วันที่ในรูปแบบYYYY-MM-DD
-     * @param {number} amount - จำนวนเงินที่ออม
-     */
-    function updateSavings(date, amount) {
-        if (amount <= 0 || isNaN(amount)) { // ถ้ากรอก 0, ค่าน้อยกว่า 0 หรือไม่ใช่ตัวเลข ให้ลบข้อมูลนั้นออก
-            delete savingsData[date];
-        } else {
-            savingsData[date] = amount;
-        }
-        localStorage.setItem('savingsData', JSON.stringify(savingsData));
-        calculateAndDisplayTotalSavings();
-    }
-
-    /**
-     * คำนวณยอดเงินออมรวมทั้งหมดและแสดงผล
-     */
-    function calculateAndDisplayTotalSavings() {
-        let total = 0;
-        for (const date in savingsData) {
-            total += parseFloat(savingsData[date]) || 0;
-        }
-        
-        // ตรวจสอบว่าค่าเปลี่ยนไปหรือไม่ก่อนที่จะเรียกอนิเมชั่น
-        const currentTotalText = totalSavingsElement.textContent;
-        const newTotalText = total.toFixed(2);
-
-        if (currentTotalText !== newTotalText) {
-            // เพิ่ม class เพื่อกระตุ้นอนิเมชั่น pulseEffect
-            totalSavingsElement.closest('.summary').classList.remove('pulseEffect'); // ลบ class เก่าออกก่อน
-            void totalSavingsElement.closest('.summary').offsetWidth; // ทริกการ reflow เพื่อให้อนิเมชั่นเล่นซ้ำ
-            totalSavingsElement.closest('.summary').classList.add('pulseEffect'); // เพิ่ม class ใหม่
-        }
-        
-        totalSavingsElement.textContent = newTotalText;
-    }
-
-    // Event listener สำหรับการเปลี่ยนแปลงค่าในช่องกรอกเงิน
-    calendarGrid.addEventListener('input', (event) => {
-        if (event.target.classList.contains('saving-input')) {
-            const date = event.target.dataset.date;
-            const amount = parseFloat(event.target.value);
-            updateSavings(date, amount);
-        }
+  listEl.innerHTML = "";
+  tx
+    .filter(t => (filter === "all" ? true : t.type === filter))
+    .filter(t => t.title.toLowerCase().includes(q))
+    .sort((a,b) => b.createdAt - a.createdAt)
+    .forEach(t => {
+      const li = document.createElement("li");
+      li.className = "item";
+      li.innerHTML = `
+        <span class="badge ${t.type === "income" ? "badge-income" : "badge-expense"}">
+          ${t.type === "income" ? "รายรับ" : "รายจ่าย"}
+        </span>
+        <div class="grow">
+          <div class="title">${escapeHtml(t.title)}</div>
+          <div class="meta">${new Date(t.createdAt).toLocaleString("th-TH")}</div>
+        </div>
+        <div class="amount ${t.type}">${t.type === "income" ? "+" : "−"} ${fmt(t.amount)}</div>
+        <button class="clear-btn ml-3" data-id="${t.id}" aria-label="ลบ">ลบ</button>
+      `;
+      listEl.appendChild(li);
     });
 
-    // Event listeners สำหรับปุ่มเปลี่ยนเดือน
-    prevMonthBtn.addEventListener('click', () => {
-        currentMonth--;
-        if (currentMonth < 0) {
-            currentMonth = 11;
-            currentYear--;
-        }
-        renderCalendar(currentMonth, currentYear);
-    });
+  recalc();
+}
 
-    nextMonthBtn.addEventListener('click', () => {
-        currentMonth++;
-        if (currentMonth > 11) {
-            currentMonth = 0;
-            currentYear++;
-        }
-        renderCalendar(currentMonth, currentYear);
-    });
+function escapeHtml(str) {
+  return str.replace(/[&<>"']/g, (m) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#039;"
+  }[m]));
+}
 
-    // เรียกใช้งานฟังก์ชัน renderCalendar ครั้งแรกเมื่อหน้าเว็บโหลดเสร็จ
-    renderCalendar(currentMonth, currentYear);
+// --- Events ---
+txForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const title = titleEl.value.trim();
+  const amount = Number(amountEl.value);
+  const type = typeEl.value;
+
+  if (!title || !amount || isNaN(amount)) return;
+
+  tx.push({ id: id(), title, amount: Math.abs(amount), type, createdAt: Date.now() });
+  save();
+  txForm.reset();
+  render();
 });
+
+listEl.addEventListener("click", (e) => {
+  const id = e.target.dataset?.id;
+  if (!id) return;
+  tx = tx.filter(t => t.id !== id);
+  save();
+  render();
+});
+
+[searchEl, filterEl].forEach(el => el.addEventListener("input", render));
+
+resetBtn.addEventListener("click", () => {
+  if (!confirm("ลบข้อมูลทั้งหมด?")) return;
+  tx = [];
+  save();
+  render();
+});
+
+// --- Init ---
+render();
