@@ -1,339 +1,50 @@
-/* style.css */
-
 :root {
-    --primary-blue: #3498db;
-    --light-blue: #e3f2fd;
-    --dark-blue: #2c3e50;
-    --text-color: #333;
-    --border-color: #e0e0e0;
-    --bg-light: #f9f9f9;
-    --bg-body: #ecf0f1;
-    --saving-green: #27ae60;
-    --today-red: #e74c3c;
-    --accent-blue: #5dade2; /* สีฟ้าสำหรับเน้น */
+  --ring: 0 0% 100% / .6;
 }
 
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    /* พื้นหลังเปลี่ยนสีแบบไล่เฉดเข้ม-อ่อนและกลมกลืน */
-    background: linear-gradient(45deg, rgb(180, 210, 225), rgb(210, 230, 240)); /* สีเริ่มต้น: ฟ้ากลาง -> ฟ้าอ่อน */
-    background-size: 400% 400%; /* ขนาดใหญ่เพื่อ animate gradient */
-    animation: backgroundSmoothRGBAnimation 35s ease-in-out infinite alternate; /* เพิ่มเวลาให้ช้าลงเล็กน้อย */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    margin: 0;
-    color: var(--text-color);
-    box-sizing: border-box;
-    overflow: hidden; /* ป้องกัน scrollbar ที่เกิดจากอนิเมชั่น */
-    position: relative;
+* { font-family: "Prompt", system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+
+.card {
+  @apply rounded-2xl bg-white/70 backdrop-blur ring-1 ring-sky-100 shadow-sm;
+}
+.card-head {
+  @apply flex gap-2 text-slate-700 px-4 sm:px-5 py-3 border-b border-sky-100;
+}
+.card-head .label { @apply inline-flex items-center gap-2 font-semibold; }
+.card-body { @apply p-4 sm:p-5; }
+
+.stat { @apply text-2xl sm:text-3xl font-bold tracking-tight; }
+.stat.positive { @apply text-slate-800; }
+.stat.income { @apply text-emerald-600; }
+.stat.expense { @apply text-rose-600; }
+
+.field-label { @apply block text-sm text-slate-600 mb-1; }
+.field {
+  @apply w-full h-11 px-3 rounded-xl ring-1 ring-slate-200 bg-white/80 outline-none
+         focus:ring-2 focus:ring-sky-300 transition;
 }
 
-/* Keyframes สำหรับอนิเมชั่นพื้นหลังเปลี่ยนสีแบบไล่เฉดเข้ม-อ่อน */
-@keyframes backgroundSmoothRGBAnimation {
-    0% {
-        background-position: 0% 0%;
-        background-image: linear-gradient(45deg, rgb(180, 210, 225), rgb(210, 230, 240), rgb(220, 240, 250)); /* ฟ้ากลาง -> ฟ้าอ่อน -> ฟ้าอ่อนมาก */
-    }
-    20% {
-        background-position: 100% 0%;
-        background-image: linear-gradient(45deg, rgb(255, 200, 150), rgb(255, 220, 180), rgb(255, 230, 200)); /* ส้ม -> ส้มอ่อน -> ส้มอ่อนมาก */
-    }
-    40% {
-        background-position: 0% 100%;
-        background-image: linear-gradient(45deg, rgb(150, 255, 150), rgb(180, 255, 180), rgb(200, 255, 200)); /* เขียว -> เขียวอ่อน -> เขียวอ่อนมาก */
-    }
-    60% {
-        background-position: 100% 100%;
-        background-image: linear-gradient(45deg, rgb(200, 150, 255), rgb(220, 180, 255), rgb(230, 200, 255)); /* ม่วง -> ม่วงอ่อน -> ม่วงอ่อนมาก */
-    }
-    80% {
-        background-position: 0% 0%;
-        background-image: linear-gradient(45deg, rgb(255, 150, 150), rgb(255, 180, 180), rgb(255, 200, 200)); /* ชมพู -> ชมพูอ่อน -> ชมพูอ่อนมาก */
-    }
-    100% {
-        background-position: 0% 0%;
-        background-image: linear-gradient(45deg, rgb(180, 210, 225), rgb(210, 230, 240), rgb(220, 240, 250)); /* กลับสู่ฟ้ากลาง -> ฟ้าอ่อน */
-    }
+.btn-primary {
+  @apply inline-flex items-center justify-center h-11 px-4 rounded-xl
+         bg-sky-600 text-white font-semibold shadow-sm
+         hover:bg-sky-700 active:scale-95 transition;
 }
 
-
-/* ------------------------------------------- */
-/* สไตล์และอนิเมชั่นสำหรับ Container และส่วนประกอบอื่นๆ */
-/* ------------------------------------------- */
-.container {
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    text-align: center;
-    width: 90%;
-    max-width: 850px;
-    opacity: 0;
-    animation: fadeIn 0.8s ease-out forwards;
-    transform: translateY(20px);
-    animation-delay: 0.2s;
-    position: relative;
-    z-index: 1; /* ให้ container อยู่เหนือพื้นหลัง */
+/* รายการ */
+.item {
+  @apply flex items-center gap-3 px-4 sm:px-5 py-3 hover:bg-sky-50/60 transition;
 }
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
+.item .badge {
+  @apply text-xs px-2 py-0.5 rounded-lg ring-1;
 }
+.badge-income { @apply bg-emerald-50 text-emerald-700 ring-emerald-200; }
+.badge-expense { @apply bg-rose-50 text-rose-700 ring-rose-200; }
+.item .title { @apply font-medium text-slate-800; }
+.item .meta  { @apply text-xs text-slate-500; }
+.item .amount { @apply ml-auto font-semibold; }
+.item .amount.income { @apply text-emerald-600; }
+.item .amount.expense { @apply text-rose-600; }
 
-
-h1 {
-    color: var(--dark-blue);
-    margin-bottom: 25px;
-    font-size: 2.5em;
-    letter-spacing: 1px;
-}
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 25px;
-    gap: 10px;
-}
-
-.calendar-header button {
-    background-color: var(--primary-blue);
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 1.1em;
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    transition: background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
-}
-
-.calendar-header button:hover {
-    background-color: #2980b9;
-    transform: translateY(-2px);
-}
-
-.calendar-header button svg {
-    width: 20px;
-    height: 20px;
-    fill: white; /* ตรวจสอบให้ไอคอนสีขาวเสมอ */
-}
-
-#currentMonthYear {
-    color: var(--dark-blue);
-    font-size: 2em;
-    font-weight: 600;
-    flex-grow: 1;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 8px;
-    margin-bottom: 30px;
-    animation: gridFadeIn 0.5s ease-out; /* อนิเมชั่นสำหรับการเปลี่ยนเดือน */
-}
-
-@keyframes gridFadeIn {
-    from { opacity: 0; transform: scale(0.98); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.day-name, .calendar-day {
-    padding: 10px 5px;
-    border-radius: 8px;
-    text-align: center;
-    font-weight: bold;
-    font-size: 0.95em;
-    box-sizing: border-box;
-}
-
-.day-name {
-    /* ปรับปรุงให้เป็นไล่สีแบบผสมผสาน เข้ม-อ่อน และสมูท */
-    background: linear-gradient(45deg, rgb(30, 130, 190), rgb(60, 160, 220)); /* สีเริ่มต้น: ฟ้าเข้ม -> ฟ้ากลาง */
-    background-size: 200% 200%; /* ขนาดใหญ่ขึ้นเพื่อ animate gradient */
-    color: white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    animation: dayNameSmoothGradientChange 20s ease-in-out infinite alternate; /* เพิ่มเวลาให้ช้าลงเล็กน้อย */
-}
-
-/* Keyframes สำหรับอนิเมชั่นเปลี่ยนสีของ Day Name แบบ Gradient เข้ม-อ่อน */
-@keyframes dayNameSmoothGradientChange {
-    0% {
-        background-position: 0% 50%;
-        background-image: linear-gradient(45deg, rgb(30, 130, 190), rgb(60, 160, 220), rgb(90, 190, 250)); /* ฟ้าเข้ม -> กลาง -> อ่อน */
-    }
-    25% {
-        background-position: 100% 50%;
-        background-image: linear-gradient(45deg, rgb(40, 180, 90), rgb(70, 210, 120), rgb(100, 240, 150)); /* เขียวเข้ม -> กลาง -> อ่อน */
-    }
-    50% {
-        background-position: 0% 100%;
-        background-image: linear-gradient(45deg, rgb(220, 140, 0), rgb(250, 200, 30), rgb(255, 220, 60)); /* ส้มเข้ม -> กลาง -> อ่อน */
-    }
-    75% {
-        background-position: 100% 0%;
-        background-image: linear-gradient(45deg, rgb(200, 40, 30), rgb(240, 80, 70), rgb(255, 120, 110)); /* แดงเข้ม -> กลาง -> อ่อน */
-    }
-    100% {
-        background-position: 0% 50%;
-        background-image: linear-gradient(45deg, rgb(30, 130, 190), rgb(60, 160, 220), rgb(90, 190, 250)); /* กลับสู่ฟ้าเข้ม -> กลาง -> อ่อน */
-    }
-}
-
-
-.calendar-day {
-    background-color: var(--bg-light);
-    border: 1px solid var(--border-color);
-    min-height: 100px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    position: relative;
-    transition: background-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-    animation: dayPopIn 0.3s ease-out forwards;
-    opacity: 0;
-    /* animation-delay จะถูกตั้งค่าใน JS */
-}
-
-@keyframes dayPopIn {
-    from { opacity: 0; transform: scale(0.8); }
-    to { opacity: 1; transform: scale(1); }
-}
-
-.calendar-day.empty {
-    background-color: var(--bg-body);
-    border: 1px dashed var(--border-color);
-    opacity: 0.6;
-    animation: none;
-}
-
-.calendar-day.current-month {
-    background-color: #ffffff;
-}
-
-.calendar-day:not(.empty):hover {
-    background-color: var(--light-blue);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.calendar-day.today {
-    border: 2px solid var(--today-red);
-    background-color: #ffeaea;
-    box-shadow: 0 0 15px rgba(231, 76, 60, 0.2);
-}
-
-.date-number {
-    font-size: 1.4em;
-    font-weight: bold;
-    color: var(--dark-blue);
-    margin-bottom: 5px;
-    padding-top: 5px;
-}
-
-.saving-input {
-    width: calc(100% - 20px);
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    text-align: center;
-    font-size: 1em;
-    margin-top: auto;
-    margin-bottom: 5px;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.08);
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-}
-
-.saving-input:focus {
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.3);
-    outline: none;
-}
-
-.summary {
-    margin-top: 30px;
-    padding: 20px;
-    background-color: var(--light-blue);
-    border-radius: 10px;
-    font-size: 1.8em;
-    font-weight: bold;
-    color: var(--saving-green);
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-    animation: pulseEffect 0.6s ease-out;
-}
-
-@keyframes pulseEffect {
-    0% { transform: scale(1); opacity: 1; }
-    50% { transform: scale(1.03); opacity: 0.8; }
-    100% { transform: scale(1); opacity: 1; }
-}
-
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .container {
-        padding: 20px;
-    }
-    h1 {
-        font-size: 2em;
-    }
-    #currentMonthYear {
-        font-size: 1.5em;
-    }
-    .calendar-header button {
-        padding: 8px 12px;
-        font-size: 0.9em;
-    }
-    .day-name, .calendar-day {
-        padding: 8px 3px;
-        font-size: 0.9em;
-    }
-    .calendar-day {
-        min-height: 80px;
-    }
-    .date-number {
-        font-size: 1.2em;
-    }
-    .saving-input {
-        padding: 6px;
-        font-size: 0.9em;
-    }
-    .summary {
-        font-size: 1.4em;
-    }
-}
-
-@media (max-width: 480px) {
-    .container {
-        padding: 15px;
-    }
-    h1 {
-        font-size: 1.8em;
-    }
-    .calendar-header {
-        flex-direction: column;
-        gap: 15px;
-    }
-    #currentMonthYear {
-        font-size: 1.3em;
-    }
-    .calendar-grid {
-        gap: 5px;
-    }
-    .day-name, .calendar-day {
-        padding: 5px;
-        min-height: 70px;
-    }
-    .date-number {
-        font-size: 1em;
-    }
-    .saving-input {
-        width: 90%;
-    }
+.clear-btn {
+  @apply text-xs px-2 py-1 rounded-lg bg-slate-50 text-slate-600 ring-1 ring-slate-200 hover:bg-slate-100;
 }
